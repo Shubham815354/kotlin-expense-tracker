@@ -1,5 +1,7 @@
 package expensetracker
 
+import expensetracker.auth.AuthService
+import expensetracker.auth.LoginScreen
 import java.math.BigDecimal
 import java.math.RoundingMode
 
@@ -94,5 +96,7 @@ class ConsoleApp(
 }
 
 fun main() {
+    // Sign up / log in first; the expense menu is only shown to a signed-in user.
+    LoginScreen(AuthService()).run() ?: return
     ConsoleApp().run()
 }

@@ -35,6 +35,14 @@ Category (number or name): 1
 Added #1: Groceries - 850.50 (Food)
 ```
 
+### Login
+
+On start you create an account (first run), then log in:
+
+- Username: 3-20 letters or digits. Password: at least 8 characters with a letter and a number.
+- The password is stored only as a salted SHA-256 hash, in memory, and is never printed. Input is hidden in a real terminal.
+- After 3 wrong attempts the app exits.
+
 Invalid input is rejected with a message, and nothing is saved:
 
 ```
@@ -64,6 +72,8 @@ Not added: "abc" is not a valid amount.
 src/main/kotlin/expensetracker/
 ├── Category.kt            enum of categories + parsing from menu input
 ├── Expense.kt             data class (amount is BigDecimal)
+├── auth/AuthService.kt    sign-up, login, salted password hash, lockout after 3 failures
+├── auth/LoginScreen.kt    console sign-up/login flow
 ├── ExpenseResult.kt       sealed Result type (Success / Failure) + sealed ExpenseError
 ├── ExpenseRepository.kt   storage interface + in-memory implementation
 ├── ExpenseCalculator.kt   pure calculations: total, totalsByCategory (groupBy), topCategory
@@ -78,5 +88,5 @@ src/main/kotlin/expensetracker/
 
 ## Known limitations
 
-- Data is kept in memory only and is lost when the program exits.
+- Data, including the account, is kept in memory only and is lost when the program exits.
 - Amounts are not tied to a currency.
