@@ -32,6 +32,22 @@ class ExpenseServiceTest {
         assertTrue(service.list().isEmpty())
     }
 
+    // Regression test for #2: amounts with more than 2 decimals made the listed items
+    // (rounded for display) not add up to the displayed total.
+    @Test
+    fun `amounts with more than two decimals are rejected`() {
+        val result = service.add("Coffee", BigDecimal("10.555"), Category.FOOD)
+        assertIs<ExpenseError.TooManyDecimals>(assertIs<ExpenseResult.Failure>(result).error)
+        assertTrue(service.list().isEmpty())
+    }
+
+    @Test
+    fun `amounts with up to two decimals or trailing zeros are accepted`() {
+        assertIs<ExpenseResult.Success<Expense>>(service.add("Tea", BigDecimal("10.5"), Category.FOOD))
+        assertIs<ExpenseResult.Success<Expense>>(service.add("Juice", BigDecimal("10.55"), Category.FOOD))
+        assertIs<ExpenseResult.Success<Expense>>(service.add("Water", BigDecimal("10.500"), Category.FOOD))
+    }
+
     @Test
     fun `zero amount is allowed`() {
         assertIs<ExpenseResult.Success<Expense>>(service.add("Free sample", BigDecimal.ZERO, Category.FOOD))

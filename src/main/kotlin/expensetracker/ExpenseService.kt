@@ -10,6 +10,9 @@ class ExpenseService(private val repository: ExpenseRepository = InMemoryExpense
         return when {
             cleanTitle.isEmpty() -> ExpenseResult.Failure(ExpenseError.EmptyTitle)
             amount < BigDecimal.ZERO -> ExpenseResult.Failure(ExpenseError.NegativeAmount(amount))
+            // Amounts are shown with 2 decimals; more precision would make listed items
+            // and totals disagree (#2). Trailing zeros such as 10.500 are fine.
+            amount.stripTrailingZeros().scale() > 2 -> ExpenseResult.Failure(ExpenseError.TooManyDecimals(amount))
             else -> ExpenseResult.Success(repository.add(cleanTitle, amount, category))
         }
     }
